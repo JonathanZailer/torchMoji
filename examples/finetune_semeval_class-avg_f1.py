@@ -46,5 +46,5 @@ print(model)
 
 # For finetuning however, pass in the actual number of classes.
 model, f1 = class_avg_finetune(model, data['texts'], data['labels'],
-                                nb_classes, data['batch_size'], method='last')
+                                nb_classes, data['batch_size'], method='last', nb_epochs=2)
 print('F1: {}'.format(f1))

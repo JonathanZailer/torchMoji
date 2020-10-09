@@ -212,18 +212,20 @@ def class_avg_tune_trainable(model, nb_classes, loss_op, optim_op, train, val, t
         if verbose:
             print("Training..")
         fit_model(model, loss_op, optim_op, train_gen, [(X_val_resamp, y_val_resamp)],
-                  nb_epochs, checkpoint_weight_path, patience, verbose=0)
+                  nb_epochs, checkpoint_weight_path, patience) #, verbose=0)
 
         # Reload the best weights found to avoid overfitting
         # Wait a bit to allow proper closing of weights file
         sleep(1)
         model.load_state_dict(torch.load(checkpoint_weight_path))
+        try:
+            # Evaluate
+            y_pred_val = model(X_val) #.cpu().numpy()
+            y_pred_test = model(X_test) # .cpu().numpy()
+        except:
+            pass
 
-        # Evaluate
-        y_pred_val = model(X_val).cpu().numpy()
-        y_pred_test = model(X_test).cpu().numpy()
-
-        f1_test, best_t = find_f1_threshold(y_val_new, y_pred_val,
+        f1_test, best_t = find_f1_threshold(model,y_val_new, y_pred_val,
                                             y_test_new, y_pred_test)
         if verbose:
             print('f1_test: {}'.format(f1_test))
